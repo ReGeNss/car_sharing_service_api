@@ -81,3 +81,32 @@ CREATE TABLE trip (
     distance NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (distance >= 0),
     cost NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (cost >= 0)
 );
+
+CREATE TABLE payment (
+    payment_id SERIAL PRIMARY KEY,
+    trip_id INT REFERENCES trip(trip_id),
+    booking_id INT REFERENCES booking(booking_id),
+    user_id INT NOT NULL REFERENCES users(user_id),
+    amount NUMERIC(10,2) NOT NULL CHECK (amount >= 0),
+    method payment_method NOT NULL,
+    status payment_status NOT NULL
+);
+
+CREATE TABLE maintenance (
+    maintenance_id SERIAL PRIMARY KEY,
+    vehicle_id INT NOT NULL REFERENCES vehicle(vehicle_id),
+    type VARCHAR(100) NOT NULL,
+    date TIMESTAMP NOT NULL,
+    mileage NUMERIC(10,2) NOT NULL CHECK (mileage >= 0),
+    comment VARCHAR(255),
+    status maintenance_status NOT NULL
+);
+
+CREATE TABLE penalty (
+    penalty_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(user_id),
+    trip_id INT NOT NULL REFERENCES trip(trip_id),
+    type VARCHAR(150) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL CHECK (amount >= 0),
+    date TIMESTAMP NOT NULL
+);

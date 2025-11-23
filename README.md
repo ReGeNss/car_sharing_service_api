@@ -58,7 +58,7 @@ The system stores:
 | vin           | VARCHAR(50)              | NOT NULL, UNIQUE                                 |
 | type          | ENUM('electric','petrol','hybrid') | NOT NULL                               |
 | status        | ENUM('available','booked','in_trip','maintenance') | NOT NULL |
-| location      | VARCHAR(255)             | NOT NULL                                         |
+| location_id      | int             | FK → Coordinates(coordinates_id), NOT NULL                                         |
 | fuel_level    | TINYINT UNSIGNED         | CHECK(fuel_level BETWEEN 0 AND 100)              |
 
 ### Booking
@@ -79,8 +79,8 @@ The system stores:
 | vehicle_id      | INT               | FK → Vehicle(vehicle_id), NOT NULL                   |
 | start_time      | DATETIME          | NOT NULL                                            |
 | end_time        | DATETIME          | NULL                                                |
-| start_location  | VARCHAR(255)      | NOT NULL                                            |
-| end_location    | VARCHAR(255)      | NULL                                                |
+| start_location_id  | int      | FK → Coordinates(coordinates_id), NOT NULL                                            |
+| end_location_id    | int      | FK → Coordinates(coordinates_id), NULL                                                |
 | distance        | DECIMAL(10,2)     | NOT NULL DEFAULT 0, CHECK(distance >= 0)            |
 | cost            | DECIMAL(10,2)     | NOT NULL DEFAULT 0, CHECK(cost >= 0)                |
 

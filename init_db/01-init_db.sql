@@ -33,3 +33,38 @@ CREATE TABLE tariff (
     deposit NUMERIC(10,2) NOT NULL CHECK (deposit >= 0),
     insurance NUMERIC(10,2) NOT NULL CHECK (insurance >= 0)
 );
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+    password TEXT NOT NULL,
+    phone VARCHAR(20) NOT NULL UNIQUE CHECK (phone ~ '^\+380[0-9]{9}$'),
+    passport_data VARCHAR(255) NOT NULL UNIQUE CHECK (passport_data ~ '^[A-Z]{2}[0-9]{6}$'),
+    driver_license VARCHAR(255) NOT NULL UNIQUE CHECK (driver_license ~ '^[0-9]{8}$'),
+    registration_date TIMESTAMP NOT NULL,
+    status user_status NOT NULL
+);
+
+CREATE TABLE vehicle (
+    vehicle_id SERIAL PRIMARY KEY,
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    plate_number VARCHAR(8) NOT NULL UNIQUE CHECK (plate_number ~ '^[A-Z]{2}[0-9]{4}[A-Z]{2}$'),
+    vin VARCHAR(17) NOT NULL UNIQUE CHECK (vin ~ '^[A-HJ-NPR-Z0-9]{17}$'),
+    type vehicle_type NOT NULL,
+    status vehicle_status NOT NULL,
+    location INT NOT NULL REFERENCES coordinates(coordinates_id),
+    fuel_level INT CHECK (fuel_level BETWEEN 0 AND 100),
+    tariff_id INT REFERENCES tariff(tariff_id)
+);
+
+CREATE TABLE booking (
+    booking_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(user_id),
+    vehicle_id INT NOT NULL REFERENCES vehicle(vehicle_id),
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    status booking_status NOT NULL
+);

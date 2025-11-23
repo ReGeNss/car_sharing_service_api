@@ -43,6 +43,7 @@ The system stores:
 | last_name          | VARCHAR(100)           | NOT NULL                                         |
 | email              | VARCHAR(255)           | NOT NULL, UNIQUE                                 |
 | phone              | VARCHAR(20)            | NOT NULL, UNIQUE                                 |
+| password           | string                 | NOT NULL                                         |
 | passport_data      | VARCHAR(255)           | NOT NULL                                         |
 | driver_license     | VARCHAR(255)           | NOT NULL                                         |
 | registration_date  | DATETIME               | NOT NULL                                         |

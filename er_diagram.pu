@@ -1,0 +1,109 @@
+@startuml
+
+entity User {
+    * user_id : int
+    --
+    first_name : string
+    last_name : string
+    email : string
+    phone : string
+    passport_data : string
+    driver_license : string
+    registration_date : datetime
+    status : string
+}
+
+entity Vehicle {
+    * vehicle_id : int
+    --
+    brand : string
+    model : string
+    plate_number : string
+    vin : string
+    type : string
+    status : string
+    location : string
+    fuel_level : int
+}
+
+entity Booking {
+    * booking_id : int
+    --
+    user_id : int
+    vehicle_id : int
+    start_time : datetime
+    end_time : datetime
+    status : string
+}
+
+entity Trip {
+    * trip_id : int
+    --
+    user_id : int
+    vehicle_id : int
+    start_time : datetime
+    end_time : datetime
+    start_location : string
+    end_location : string
+    distance : float
+    cost : float
+}
+
+entity Payment {
+    * payment_id : intІ
+    --
+    trip_id : int
+    booking_id : int
+    user_id : int
+    amount : float
+    method : string
+    status : string
+}
+
+entity Tariff {
+    * tariff_id : int
+    --
+    name : string
+    price_per_minute : float
+    included mileage: int
+    booking_price: float
+    booking_duration_minutes: float
+    deposit: int
+    insurance: float
+}
+
+entity Maintenance {
+    * maintenance_id : int
+    --
+    vehicle_id : int
+    type : string
+    date : datetime
+    mileage : float
+    comment : string
+    status : string
+}
+
+entity Penalty {
+    * penalty_id : int
+    --
+    user_id : int
+    trip_id : int
+    type : string
+    amount : float
+    date : datetime
+}
+
+' Relationships
+User --o{ Booking
+User --o{ Trip
+User --o{ Payment
+User --o{ Penalty
+
+Vehicle --o{ Booking
+Vehicle --o{ Trip
+Vehicle --o{ Maintenance
+Vehicle }o-- Tariff
+
+Trip --o{ Payment
+Trip --o{ Penalty
+@enduml

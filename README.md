@@ -30,7 +30,9 @@ The system stores:
 - Each vehicle is assigned exactly one tariff.
 - A single trip can have multiple penalties linked to it.
 
----
+## 2. ER Diagram
+<img width="985" height="722" alt="зображення" src="https://github.com/user-attachments/assets/978749a2-c6b6-4cf5-9609-6a8641141f7e" />
+
 ## 3. Entity List and Attribute Descriptions with constraints
 
 ### User

@@ -31,7 +31,7 @@ The system stores:
 - A single trip can have multiple penalties linked to it.
 
 ## 2. ER Diagram
-<img width="985" height="722" alt="зображення" src="https://github.com/user-attachments/assets/978749a2-c6b6-4cf5-9609-6a8641141f7e" />
+<img width="985" height="722" alt="зображення" src="https://img.plantuml.biz/plantuml/dpng/lLKnhjim3Drz2iy5V85E7-rSu0zjLqEnv8IeH0aIdIA8_zhpzKYbvKIsPBNuKxCeUXGflaUAVWaaF4r6Dur20hgrtuBoxRrf-VUXdNZJWsm_je0KiQwBomW-K8_2ABO5ye3dY6jHXPKHe7F8NImMfvm8uQVryeWwwwcNWaHkaXwkdA26GM4eWdbr1juA0ekBws9U5WAZuW5cJbFOdDwI1D_L1GQjaWhNTLyLukG55WaRArL9LlFDFKxcnE9cbYjW3j3D5KpAHAFETbYPPJcDazAzLjTu_G9kd3vP-uET4wVJkgzoEbQzga1idNxHivHMeQpYVvVygmUNScEZ---9iKTTrCMdRf7SO0A79TgehLZ1mGPAm4RmLTmC_qqStRfF0N__sXCzAb2jrr4FOUo4b2La55si_7TBxGeXF8pZLeguhHRZ-CgTvuVOEyx904wKwm8uw4agsHhGIfpLaLfqtxiy3N9wFECrRDYVaShP0BH50mny7BT86xSlWWyfZ2Lx4ZGRLcLPRR3Z6wqDc0VHeZjCR8DtLkELCzEyfgvPz-zy7CSkEYPUQPYIovREPylJ6P0D8QKq9AoQ5Gy-8AvxTeEsUCvHlYD-UEQvw-pzEQqoR1aH6V1uKZcs2jGqpnbU12pW6BF0TbsIJ6-sw-RvyJWoX_c-LwLfuY0h4iomHu89AmAyyBXPFiT_0000" />
 
 ## 3. Entity List and Attribute Descriptions with constraints
 

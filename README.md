@@ -127,3 +127,17 @@ The system stores:
 | type        | VARCHAR(150)      | NOT NULL                                           |
 | amount      | DECIMAL(10,2)     | NOT NULL, CHECK(amount >= 0)                       |
 | date        | DATETIME          | NOT NULL                                           |
+
+## 4 Relationships (one-line format)
+
+- User — Booking: One user can have many bookings; each booking belongs to one user.
+- User — Trip: One user can have many trips; each trip belongs to one user.
+- User — Payment: One user can make many payments; each payment belongs to one user.
+- User — Penalty: One user can receive many penalties; each penalty belongs to one user.
+- Vehicle — Booking: One vehicle can have many bookings; each booking uses one vehicle.
+- Vehicle — Trip: One vehicle can be used in many trips; each trip uses one vehicle.
+- Vehicle — Maintenance: One vehicle has many maintenance records; each record belongs to one vehicle.
+- Vehicle — Tariff: Many vehicles can share one tariff; each vehicle has exactly one tariff.
+- Booking — Payment: A booking may have multiple payments; each payment may reference a booking.
+- Trip — Payment: A trip may have multiple payments; each payment may reference a trip.
+- Trip — Penalty: A trip may generate multiple penalties; each penalty is tied to one trip.

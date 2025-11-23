@@ -36,98 +36,102 @@ The system stores:
 ## 3. Entity List and Attribute Descriptions with constraints
 
 ### User
-| Attribute          | SQL Type               | Constraints                                     |
-|--------------------|------------------------|--------------------------------------------------|
-| user_id            | INT                    | PK, AUTO_INCREMENT                               |
-| first_name         | VARCHAR(100)           | NOT NULL                                         |
-| last_name          | VARCHAR(100)           | NOT NULL                                         |
-| email              | VARCHAR(255)           | NOT NULL, UNIQUE                                 |
-| phone              | VARCHAR(20)            | NOT NULL, UNIQUE                                 |
-| password           | string                 | NOT NULL                                         |
-| passport_data      | VARCHAR(255)           | NOT NULL                                         |
-| driver_license     | VARCHAR(255)           | NOT NULL                                         |
-| registration_date  | DATETIME               | NOT NULL                                         |
-| status             | ENUM('active','blocked') | NOT NULL                                      |
+| Attribute         | SQL Type      | Constraints |
+|------------------|---------------|-------------|
+| user_id          | SERIAL        | PK |
+| first_name       | VARCHAR(100)  | NOT NULL |
+| last_name        | VARCHAR(100)  | NOT NULL |
+| email            | VARCHAR(255)  | NOT NULL, UNIQUE, CHECK (regex email) |
+| password         | TEXT          | NOT NULL |
+| phone            | VARCHAR(20)   | NOT NULL, UNIQUE, CHECK (`^\+380[0-9]{9}$`) |
+| passport_data    | VARCHAR(255)  | NOT NULL, UNIQUE, CHECK (`^[A-Z]{2}[0-9]{6}$`) |
+| driver_license   | VARCHAR(255)  | NOT NULL, UNIQUE, CHECK (`^[0-9]{8}$`) |
+| registration_date| TIMESTAMP     | NOT NULL |
+| status           | user_status   | ENUM('active','blocked') |
 
 ### Vehicle
-| Attribute     | SQL Type                 | Constraints                                     |
-|---------------|--------------------------|--------------------------------------------------|
-| vehicle_id    | INT                      | PK, AUTO_INCREMENT                               |
-| brand         | VARCHAR(100)             | NOT NULL                                         |
-| model         | VARCHAR(100)             | NOT NULL                                         |
-| plate_number  | VARCHAR(20)              | NOT NULL, UNIQUE                                 |
-| vin           | VARCHAR(50)              | NOT NULL, UNIQUE                                 |
-| type          | ENUM('electric','petrol','hybrid') | NOT NULL                               |
-| status        | ENUM('available','booked','in_trip','maintenance') | NOT NULL |
-| location_id      | int             | FK → Coordinates(coordinates_id), NOT NULL                                         |
-| fuel_level    | TINYINT UNSIGNED         | CHECK(fuel_level BETWEEN 0 AND 100)              |
+| Attribute     | SQL Type        | Constraints |
+|---------------|------------------|-------------|
+| vehicle_id    | SERIAL           | PK |
+| brand         | VARCHAR(100)     | NOT NULL |
+| model         | VARCHAR(100)     | NOT NULL |
+| plate_number  | VARCHAR(8)       | NOT NULL, UNIQUE, CHECK (`^[A-Z]{2}[0-9]{4}[A-Z]{2}$`) |
+| vin           | VARCHAR(17)      | NOT NULL, UNIQUE, CHECK (`^[A-HJ-NPR-Z0-9]{17}$`) |
+| type          | vehicle_type     | ENUM('electric','petrol','hybrid') |
+| status        | vehicle_status   | ENUM('available','booked','in_trip','maintenance') |
+| location      | INT              | FK → coordinates(coordinates_id) |
+| fuel_level    | INT              | CHECK 0–100 |
+| tariff_id     | INT              | FK → tariff(tariff_id) |
 
 ### Booking
-| Attribute    | SQL Type     | Constraints                                                   |
-|--------------|--------------|----------------------------------------------------------------|
-| booking_id   | INT          | PK, AUTO_INCREMENT                                             |
-| user_id      | INT          | FK → User(user_id), NOT NULL                                   |
-| vehicle_id   | INT          | FK → Vehicle(vehicle_id), NOT NULL                             |
-| start_time   | DATETIME     | NOT NULL                                                       |
-| end_time     | DATETIME     | NULL                                                           |
-| status       | ENUM('active','expired','cancelled') | NOT NULL                           |
+| Attribute   | SQL Type       | Constraints |
+|-------------|----------------|-------------|
+| booking_id  | SERIAL         | PK |
+| user_id     | INT            | FK → users(user_id) |
+| vehicle_id  | INT            | FK → vehicle(vehicle_id) |
+| start_time  | TIMESTAMP      | NOT NULL |
+| end_time    | TIMESTAMP      | NOT NULL |
+| status      | booking_status | ENUM('active','expired','cancelled') |
+
 
 ### Trip
-| Attribute       | SQL Type          | Constraints                                        |
-|-----------------|-------------------|-----------------------------------------------------|
-| trip_id         | INT               | PK, AUTO_INCREMENT                                  |
-| user_id         | INT               | FK → User(user_id), NOT NULL                         |
-| vehicle_id      | INT               | FK → Vehicle(vehicle_id), NOT NULL                   |
-| start_time      | DATETIME          | NOT NULL                                            |
-| end_time        | DATETIME          | NULL                                                |
-| start_location_id  | int      | FK → Coordinates(coordinates_id), NOT NULL                                            |
-| end_location_id    | int      | FK → Coordinates(coordinates_id), NULL                                                |
-| distance        | DECIMAL(10,2)     | NOT NULL DEFAULT 0, CHECK(distance >= 0)            |
-| cost            | DECIMAL(10,2)     | NOT NULL DEFAULT 0, CHECK(cost >= 0)                |
+| Attribute         | SQL Type      | Constraints |
+|-------------------|---------------|-------------|
+| trip_id           | SERIAL        | PK |
+| user_id           | INT           | FK → users(user_id) |
+| vehicle_id        | INT           | FK → vehicle(vehicle_id) |
+| start_time        | TIMESTAMP     | NOT NULL |
+| end_time          | TIMESTAMP     | NULL |
+| start_location    | INT           | FK → coordinates(coordinates_id) |
+| end_location      | INT           | FK → coordinates(coordinates_id), NULL |
+| distance          | NUMERIC(10,2) | DEFAULT 0, CHECK >= 0 |
+| cost              | NUMERIC(10,2) | DEFAULT 0, CHECK >= 0 |
+
 
 ### Payment
-| Attribute    | SQL Type          | Constraints                                                    |
-|--------------|-------------------|-----------------------------------------------------------------|
-| payment_id   | INT               | PK, AUTO_INCREMENT                                              |
-| trip_id      | INT               | FK → Trip(trip_id), NULL                                        |
-| booking_id   | INT               | FK → Booking(booking_id), NULL                                  |
-| user_id      | INT               | FK → User(user_id), NOT NULL                                     |
-| amount       | DECIMAL(10,2)     | NOT NULL, CHECK(amount >= 0)                                     |
-| method       | ENUM('card','cash'bonus) | NOT NULL                                         |
-| status       | ENUM('pending','paid','failed') | NOT NULL                                     |
+| Attribute   | SQL Type        | Constraints |
+|-------------|-----------------|-------------|
+| payment_id  | SERIAL          | PK |
+| trip_id     | INT             | FK → trip(trip_id), NULL |
+| booking_id  | INT             | FK → booking(booking_id) |
+| user_id     | INT             | FK → users(user_id) |
+| amount      | NUMERIC(10,2)   | CHECK >= 0 |
+| method      | payment_method  | ENUM('card','cash') |
+| status      | payment_status  | ENUM('pending','paid','failed') |
+
 
 ### Tariff
-| Attribute                | SQL Type          | Constraints                                      |
-|--------------------------|-------------------|---------------------------------------------------|
-| tariff_id                | INT               | PK, AUTO_INCREMENT                                |
-| name                     | VARCHAR(100)      | NOT NULL, UNIQUE                                  |
-| price_per_minute         | DECIMAL(10,2)     | NOT NULL, CHECK(price_per_minute >= 0)            |
-| included_mileage         | INT               | NOT NULL, CHECK(included_mileage >= 0)            |
-| booking_price            | DECIMAL(10,2)     | NOT NULL, CHECK(booking_price >= 0)               |
-| booking_duration_minutes | INT               | NOT NULL, CHECK(booking_duration_minutes > 0)     |
-| deposit                  | DECIMAL(10,2)     | NOT NULL, CHECK(deposit >= 0)                     |
-| insurance                | DECIMAL(10,2)     | NOT NULL, CHECK(insurance >= 0)                   |
+| Attribute                | SQL Type        | Constraints |
+|--------------------------|-----------------|-------------|
+| tariff_id                | SERIAL          | PK |
+| name                     | VARCHAR(100)    | NOT NULL, UNIQUE |
+| price_per_minute         | NUMERIC(10,2)   | CHECK >= 0 |
+| included_mileage         | INT             | CHECK >= 0 |
+| booking_price            | NUMERIC(10,2)   | CHECK >= 0 |
+| booking_duration_minutes | INT             | CHECK > 0 |
+| deposit                  | NUMERIC(10,2)   | CHECK >= 0 |
+| insurance                | NUMERIC(10,2)   | CHECK >= 0 |
 
 ### Maintenance
-| Attribute      | SQL Type          | Constraints                                        |
-|----------------|-------------------|-----------------------------------------------------|
-| maintenance_id | INT               | PK, AUTO_INCREMENT                                  |
-| vehicle_id     | INT               | FK → Vehicle(vehicle_id), NOT NULL                   |
-| type           | VARCHAR(100)      | NOT NULL                                            |
-| date           | DATETIME          | NOT NULL                                            |
-| mileage        | DECIMAL(10,2)     | NOT NULL, CHECK(mileage >= 0)                       |
-| comment        | VARCHAR(255)      | NULL                                                |
-| status         | ENUM('planned','done') | NOT NULL                                      |
+| Attribute      | SQL Type          | Constraints |
+|----------------|-------------------|-------------|
+| maintenance_id | SERIAL            | PK |
+| vehicle_id     | INT               | FK → vehicle(vehicle_id) |
+| type           | VARCHAR(100)      | NOT NULL |
+| date           | TIMESTAMP         | NOT NULL |
+| mileage        | NUMERIC(10,2)     | CHECK >= 0 |
+| comment        | VARCHAR(255)      | NULL |
+| status         | maintenance_status | ENUM('planned','done') |
 
 ### Penalty
-| Attribute   | SQL Type          | Constraints                                       |
-|-------------|-------------------|----------------------------------------------------|
-| penalty_id  | INT               | PK, AUTO_INCREMENT                                 |
-| user_id     | INT               | FK → User(user_id), NOT NULL                        |
-| trip_id     | INT               | FK → Trip(trip_id), NOT NULL                        |
-| type        | VARCHAR(150)      | NOT NULL                                           |
-| amount      | DECIMAL(10,2)     | NOT NULL, CHECK(amount >= 0)                       |
-| date        | DATETIME          | NOT NULL                                           |
+| Attribute   | SQL Type      | Constraints |
+|-------------|---------------|-------------|
+| penalty_id  | SERIAL        | PK |
+| user_id     | INT           | FK → users(user_id) |
+| trip_id     | INT           | FK → trip(trip_id) |
+| type        | VARCHAR(150)  | NOT NULL |
+| amount      | NUMERIC(10,2) | CHECK >= 0 |
+| date        | TIMESTAMP     | NOT NULL |
 
 ## 4 Relationships (one-line format)
 

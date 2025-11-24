@@ -12,3 +12,14 @@ SELECT
 FROM users
 GROUP BY EXTRACT(YEAR FROM registration_date)
 ORDER BY registration_year;
+
+SELECT
+   vehicle_id,
+   SUM(distance) AS total_distance,
+   SUM(cost) AS total_earnings
+FROM trip
+GROUP BY vehicle_id;
+
+SELECT status, COUNT(*) AS booking_count
+FROM booking
+GROUP BY status;

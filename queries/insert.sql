@@ -33,3 +33,21 @@ VALUES
     (1, 1, NOW(), 1,  5.50, 27.50),
     (2, 2, NOW(), 2, 10.00, 50.00),
     (3, 3, NOW(), 3,  2.00, 10.00);
+
+INSERT INTO payment (trip_id, booking_id, user_id, amount, method, status)
+VALUES
+    (1, NULL, 1, 27.50, 'card', 'paid'),
+    (2, NULL, 2, 50.00, 'cash', 'pending'),
+    (3, NULL, 3, 10.00, 'card', 'failed');
+
+INSERT INTO maintenance (vehicle_id, type, date, mileage, comment, status)
+VALUES
+    (2, 'Oil change',    NOW(), 15000, 'Scheduled replacement', 'planned'),
+    (2, 'Brake check',   NOW(), 15200, 'Routine service',        'done'),
+    (3, 'Battery check', NOW(),  8000, 'Low voltage observed',   'planned');
+
+INSERT INTO penalty (user_id, trip_id, type, amount, date)
+VALUES
+    (1, 1, 'Late return',     100.00, NOW()),
+    (2, 2, 'Dirty car',        50.00, NOW()),
+    (3, 3, 'Smoking in car',  300.00, NOW());

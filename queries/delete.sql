@@ -17,3 +17,12 @@ SELECT * FROM payment WHERE status = 'failed';
 SELECT * FROM booking WHERE status = 'expired';
 DELETE FROM booking WHERE status = 'expired';
 SELECT * FROM booking WHERE status = 'expired';
+
+-- 5. Видалення коротких поїздок
+SELECT * FROM trip WHERE distance < 3;
+DELETE FROM trip WHERE distance < 3;
+SELECT * FROM trip WHERE distance < 3;
+
+-- 6. Видалення заблокованих користувачів
+SELECT * FROM users WHERE status = 'blocked';
+DELETE FROM users WHERE status = 'blocked';

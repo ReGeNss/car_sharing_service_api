@@ -26,3 +26,18 @@ SET status = 'expired',
     end_time = NOW()
 WHERE booking_id = 1;
 SELECT * FROM booking WHERE booking_id = 1;
+
+-- 5. Завершити поїздку
+SELECT * FROM trip WHERE trip_id = 1;
+UPDATE trip
+SET end_time = NOW(),
+    end_location = 2
+WHERE trip_id = 1;
+SELECT * FROM trip WHERE trip_id = 1;
+
+-- 6. Оновити статус платежу
+SELECT * FROM payment WHERE payment_id = 2;
+UPDATE payment
+SET status = 'paid'
+WHERE payment_id = 2;
+SELECT * FROM payment WHERE payment_id = 2;

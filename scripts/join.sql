@@ -15,3 +15,19 @@ SELECT
     b.start_time
 FROM users u
 LEFT JOIN booking b ON u.user_id = b.user_id;
+
+SELECT
+   v.plate_number,
+   c.latitude,
+   c.longitude
+FROM vehicle v
+JOIN coordinates c ON v.location = c.coordinates_id;
+
+
+SELECT
+   v.brand,
+   m.date,
+   m.type,
+   m.comment
+FROM vehicle v
+RIGHT JOIN maintenance m ON v.vehicle_id = m.vehicle_id;

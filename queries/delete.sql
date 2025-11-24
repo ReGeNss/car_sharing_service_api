@@ -7,3 +7,13 @@ SELECT * FROM penalty WHERE penalty_id = 3;
 SELECT * FROM maintenance WHERE maintenance_id = 1;
 DELETE FROM maintenance WHERE maintenance_id = 1;
 SELECT * FROM maintenance WHERE maintenance_id = 1;
+
+-- 3. Видалення failed-платежів
+SELECT * FROM payment WHERE status = 'failed';
+DELETE FROM payment WHERE status = 'failed';
+SELECT * FROM payment WHERE status = 'failed';
+
+-- 4. Видалення прострочених бронювань
+SELECT * FROM booking WHERE status = 'expired';
+DELETE FROM booking WHERE status = 'expired';
+SELECT * FROM booking WHERE status = 'expired';

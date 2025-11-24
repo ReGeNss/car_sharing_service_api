@@ -32,3 +32,19 @@ FROM booking b
 JOIN vehicle v ON b.vehicle_id = v.vehicle_id
 JOIN tariff tr ON v.tariff_id = tr.tariff_id
 GROUP BY tr.name;
+
+SELECT
+   tr.name AS tariff_name,
+   AVG(t.cost) AS average_trip_cost
+FROM trip t
+JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+JOIN tariff tr ON v.tariff_id = tr.tariff_id
+GROUP BY tr.name;
+
+SELECT
+   v.brand,
+   SUM(p.amount) AS total_penalty_amount
+FROM penalty p
+JOIN trip t ON p.trip_id = t.trip_id
+JOIN vehicle v ON t.vehicle_id = v.vehicle_id
+GROUP BY v.brand;

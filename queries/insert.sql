@@ -6,9 +6,9 @@ VALUES
 
 INSERT INTO users (first_name, last_name, email, password, phone, passport_data, driver_license, registration_date, status)
 VALUES
-    ('Ivan',  'Petrenko',  'ivan@example.com',  'pass123', '+380501112233', 'PP123456', 'DL987654', NOW(), 'active'),
-    ('Maria', 'Kovalenko', 'maria@example.com', 'qwerty',  '+380507778899', 'PP654321', 'DL555444', NOW(), 'active'),
-    ('Oleh',  'Sydorenko', 'oleh@example.com',  'pass321', '+380503334455', 'PP111222', 'DL222111', NOW(), 'blocked');
+    ('Ivan',  'Petrenko',  'ivan@example.com',  'pass123', '+380501114233', 'AD123456', '28491570', NOW(), 'active'),
+    ('Maria', 'Kovalenko', 'maria@example.com', 'qwerty',  '+380507778899', 'AF123456', '67043219', NOW(), 'active'),
+    ('Oleh',  'Sydorenko', 'oleh@example.com',  'pass321', '+380503334455', 'DQ123456', '91360745', NOW(), 'blocked');
 
 INSERT INTO tariff (name, price_per_minute, included_mileage, booking_price, booking_duration_minutes, deposit, insurance)
 VALUES

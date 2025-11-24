@@ -12,9 +12,9 @@ VALUES
 
 INSERT INTO tariff (name, price_per_minute, included_mileage, booking_price, booking_duration_minutes, deposit, insurance)
 VALUES
-    ('Standard', 5.00, 10, 20.00, 15, 200.00, 50.00),
-    ('Comfort',  7.50, 15, 25.00, 20, 250.00, 60.00),
-    ('Premium', 10.00, 20, 30.00, 30, 300.00, 80.00);
+    ('Standard+', 5.00, 10, 20.00, 15, 200.00, 50.00),
+    ('Comfort+',  7.50, 15, 25.00, 20, 250.00, 60.00),
+    ('Premium+', 10.00, 20, 30.00, 30, 300.00, 80.00);
 
 INSERT INTO vehicle (brand, model, plate_number, vin, type, status, location, fuel_level, tariff_id)
 VALUES
@@ -22,11 +22,11 @@ VALUES
     ('Toyota',  'Corolla',  'BC5678CD', '2HGCM82633A004353', 'petrol',   'maintenance', 2, 60, 2),
     ('Hyundai', 'Ioniq',    'AE1111CE', '3HGCM82633A004354', 'hybrid',   'booked',      3, 75, 1);
 
-INSERT INTO booking (user_id, vehicle_id, start_time, status)
+INSERT INTO booking (user_id, vehicle_id, start_time, end_time, status)
 VALUES
-    (1, 1, NOW(), 'active'),
-    (2, 2, NOW(), 'active'),
-    (3, 3, NOW(), 'expired');
+    (1, 1, NOW(), NOW() + INTERVAL '5 hours', 'active'),
+    (2, 2, NOW(), NOW() + INTERVAL '7 hours', 'active'),
+    (3, 3, NOW(), NOW() + INTERVAL '1 day', 'expired');
 
 INSERT INTO trip (user_id, vehicle_id, start_time, start_location, distance, cost)
 VALUES
@@ -36,9 +36,9 @@ VALUES
 
 INSERT INTO payment (trip_id, booking_id, user_id, amount, method, status)
 VALUES
-    (1, NULL, 1, 27.50, 'card', 'paid'),
-    (2, NULL, 2, 50.00, 'cash', 'pending'),
-    (3, NULL, 3, 10.00, 'card', 'failed');
+    (1, 1, 1, 27.50, 'card', 'paid'),
+    (2, 2, 2, 50.00, 'cash', 'pending'),
+    (3, 3, 3, 10.00, 'card', 'failed');
 
 INSERT INTO maintenance (vehicle_id, type, date, mileage, comment, status)
 VALUES

@@ -118,3 +118,103 @@ penalty_id → user_id, trip_id, type, amount, date
 ```
 trip_id → user_id
 ```
+
+## 3. Normal Form Analysis
+
+### 3.1. First Normal Form (1NF)
+
+* All values are atomic
+* No repeating groups
+* Every table has a primary key
+
+✅ Entire schema is in **1NF**
+
+---
+
+### 3.2. Second Normal Form (2NF)
+
+* All tables use **single-column primary keys**
+* No partial dependencies
+
+✅ Entire schema is in **2NF**
+
+---
+
+### 3.3. Third Normal Form (3NF)
+
+❌ Violations:
+
+#### Vehicle
+
+```
+vehicle_id → model → brand
+```
+
+➡️ Fix: Create `vehicle_model`
+
+#### Payment
+
+```
+payment_id → booking_id → user_id
+```
+
+➡️ Fix: Remove `user_id` from `payment`
+
+#### Penalty
+
+```
+penalty_id → trip_id → user_id
+```
+
+➡️ Fix: Remove `user_id` from `penalty`
+
+✅ Final schema is in **3NF**
+
+---
+
+## 4. Original and Updated Table Designs
+
+### 4.1. Vehicle
+
+#### Original
+
+```
+vehicle (
+    vehicle_id PK,
+    brand,
+    model,
+    plate_number,
+    vin,
+    type,
+    status,
+    location,
+    fuel_level,
+    tariff_id
+)
+```
+
+#### New lookup table
+
+```
+vehicle_model (
+    model_id PK,
+    brand,
+    model_name,
+    type
+)
+```
+
+#### Updated vehicle
+
+```
+vehicle (
+    vehicle_id PK,
+    model_id FK,
+    plate_number,
+    vin,
+    status,
+    location,
+    fuel_level,
+    tariff_id
+)
+```

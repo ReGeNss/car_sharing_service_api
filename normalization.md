@@ -269,13 +269,13 @@ CREATE TABLE vehicle_model (
     model_id SERIAL PRIMARY KEY,
     brand VARCHAR(100) NOT NULL,
     model_name VARCHAR(100) NOT NULL,
-    type vehicle_type NOT NULL, -- Type is usually inherent to the model
+    type vehicle_type NOT NULL,
     CONSTRAINT uq_brand_model UNIQUE (brand, model_name)
 );
 
 CREATE TABLE vehicle (
     vehicle_id SERIAL PRIMARY KEY,
-    model_id INT NOT NULL REFERENCES vehicle_model(model_id), -- Replaces brand, model, type
+    model_id INT NOT NULL REFERENCES vehicle_model(model_id),
     plate_number VARCHAR(8) NOT NULL UNIQUE CHECK (plate_number ~ '^[A-Z]{2}[0-9]{4}[A-Z]{2}$'),
     vin VARCHAR(17) NOT NULL UNIQUE CHECK (vin ~ '^[A-HJ-NPR-Z0-9]{17}$'),
     status vehicle_status NOT NULL,

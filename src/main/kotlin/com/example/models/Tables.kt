@@ -103,3 +103,9 @@ object Penalties : IntIdTable("penalty", "penalty_id") {
     val amount = decimal("amount", 10, 2)
     val date = datetime("date")
 }
+
+object Admins : IntIdTable("admins") {
+    val name = varchar("name", 255)
+    val login = varchar("login", 255).uniqueIndex()
+    val email = varchar("email", 255)
+}

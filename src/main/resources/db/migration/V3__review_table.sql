@@ -1,0 +1,7 @@
+CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    trip_id INT NOT NULL UNIQUE REFERENCES trip(trip_id) ON DELETE CASCADE,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

@@ -121,71 +121,60 @@ trip_id → user_id
 
 ## 3. Normal Form Analysis
 
+This section evaluates compliance with 1NF, 2NF, and 3NF based on the functional dependencies above.
+
 ### 3.1. First Normal Form (1NF)
+A relation is in 1NF if:
+* all attributes contain atomic values,
+* no repeating groups exist,
+* every entry unique
+* entries order doesn’t matter
 
-* All values are atomic
-* No repeating groups
-* Every table has a primary key
-
-✅ Entire schema is in **1NF**
-
----
+**Evaluation:** All tables in the initial design satisfy these rules. Attributes contain atomic values (strings, numbers, timestamps).
+➡️ **The entire schema is in 1NF.**
 
 ### 3.2. Second Normal Form (2NF)
+2NF requires:
+* the table is in 1NF,
+* no non-key attribute depends on part of a composite key.
 
-* All tables use **single-column primary keys**
-* No partial dependencies
-
-✅ Entire schema is in **2NF**
-
----
+**Evaluation:** All tables use simple (single-column) primary keys (e.g., `vehicle_id`, `user_id`). There are no composite primary keys where partial dependencies could occur.
+➡️ **The entire schema is in 2NF.**
 
 ### 3.3. Third Normal Form (3NF)
+3NF requires:
+* the table is in 2NF,
+* no non-key attribute depends transitively on the key (no X→Y→Z).
 
-❌ Violations:
+**Evaluation:** The initial design fails 3NF in three tables:
 
-#### Vehicle
+1.  **Vehicle:** `vehicle_id` → `model` → `brand`.
+    * **Violation:** Brand depends on Model, not just the Vehicle ID.
+    * **Fix:** Extract Model and Brand into a new lookup table `vehicle_model`.
+2.  **Payment:** `payment_id` → `booking_id` → `user_id`.
+    * **Violation:** User depends on Booking.
+    * **Fix:** Remove `user_id` from Payment table.
+3.  **Penalty:** `penalty_id` → `trip_id` → `user_id`.
+    * **Violation:** User depends on Trip.
+    * **Fix:** Remove `user_id` from Penalty table.
 
-```
-vehicle_id → model → brand
-```
-
-➡️ Fix: Create `vehicle_model`
-
-#### Payment
-
-```
-payment_id → booking_id → user_id
-```
-
-➡️ Fix: Remove `user_id` from `payment`
-
-#### Penalty
-
-```
-penalty_id → trip_id → user_id
-```
-
-➡️ Fix: Remove `user_id` from `penalty`
-
-✅ Final schema is in **3NF**
+**Conclusion:** The initial schema is in 2NF but not 3NF. The Final SQL DDL below implements the necessary changes to achieve 3NF.
 
 ---
 
-## 4. Original and Updated Table Designs
+## 4. Original and updated tables design
 
-### 4.1. Vehicle
+### 4.1. Original and updated vehicle table
 
-#### Original
-
-```
+**Original Schema:**
+```text
 vehicle (
-    vehicle_id PK,
-    brand,
-    model,
+    vehicle_id (PK),
+    brand,          
+    model,          
     plate_number,
     vin,
-    type,
+    type,           
     status,
     location,
     fuel_level,
@@ -193,23 +182,18 @@ vehicle (
 )
 ```
 
-#### New lookup table
-
-```
+**Updated Schema (Normalized):**
+```text
 vehicle_model (
-    model_id PK,
+    model_id (PK),
     brand,
     model_name,
     type
 )
-```
 
-#### Updated vehicle
-
-```
 vehicle (
-    vehicle_id PK,
-    model_id FK,
+    vehicle_id (PK),
+    model_id (FK), 
     plate_number,
     vin,
     status,
@@ -218,6 +202,94 @@ vehicle (
     tariff_id
 )
 ```
+
+**SQL Implementation:**
+```sql
+CREATE TABLE vehicle_model (
+    model_id SERIAL PRIMARY KEY,
+    brand VARCHAR(100) NOT NULL,
+    model_name VARCHAR(100) NOT NULL,
+    type vehicle_type NOT NULL,
+    CONSTRAINT uq_brand_model UNIQUE (brand, model_name)
+);
+
+ALTER TABLE vehicle 
+ADD COLUMN model_id INT;
+
+ALTER TABLE vehicle 
+ADD CONSTRAINT fk_vehicle_model 
+FOREIGN KEY (model_id) REFERENCES vehicle_model(model_id);
+
+ALTER TABLE vehicle 
+DROP COLUMN brand,
+DROP COLUMN model,
+DROP COLUMN type;
+```
+
+### 4.2. Original and updated payment table
+
+**Original Schema:**
+```text
+payment (
+    payment_id (PK),
+    trip_id,
+    booking_id,
+    user_id,    
+    amount,
+    method,
+    status
+)
+```
+
+**Updated Schema (Normalized):**
+```text
+payment (
+    payment_id (PK),
+    trip_id,
+    booking_id,
+    amount,
+    method,
+    status
+)
+```
+
+**SQL Implementation:**
+```sql
+ALTER TABLE payment 
+DROP COLUMN user_id;
+```
+
+### 4.3. Original and updated penalty table
+
+**Original Schema:**
+```text
+penalty (
+    penalty_id (PK),
+    user_id,      
+    trip_id,
+    type,
+    amount,
+    date
+)
+```
+
+**Updated Schema (Normalized):**
+```text
+penalty (
+    penalty_id (PK),
+    trip_id,
+    type,
+    amount,
+    date
+)
+```
+
+**SQL Implementation:**
+```sql
+ALTER TABLE penalty 
+DROP COLUMN user_id;
+```
+
 
 ## 5. Final SQL DDL (Fully Normalized Schema — 3NF)
 

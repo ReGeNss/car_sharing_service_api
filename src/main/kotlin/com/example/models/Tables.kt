@@ -29,8 +29,8 @@ object Users : IntIdTable("users", "user_id") {
     val phone = varchar("phone", 20).uniqueIndex()
     val passportData = varchar("passport_data", 255).uniqueIndex()
     val driverLicense = varchar("driver_license", 255).uniqueIndex()
+    val driverLicensePhotoUrl = varchar("driver_license_photo_url", 500).nullable()
     val registrationDate = datetime("registration_date").defaultExpression(CurrentDateTime)
-
     val status = enumerationByName("status", 20, UserStatus::class)
 }
 
@@ -46,12 +46,19 @@ object VehicleModels : IntIdTable("vehicle_model", "model_id") {
 
 object Vehicles : IntIdTable("vehicle", "vehicle_id") {
     val model = reference("model_id", VehicleModels, onDelete = ReferenceOption.RESTRICT)
-    val plateNumber = varchar("plate_number", 8).uniqueIndex()
+    val plateNumber = varchar("plate_number", 15).uniqueIndex()
     val vin = varchar("vin", 17).uniqueIndex()
     val status = enumerationByName("status", 20, VehicleStatus::class)
     val location = reference("location", Coordinates, onDelete = ReferenceOption.RESTRICT)
     val fuelLevel = integer("fuel_level")
     val tariff = reference("tariff_id", Tariffs, onDelete = ReferenceOption.SET_NULL)
+}
+
+object Reviews : IntIdTable("reviews", "review_id") {
+    val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE).uniqueIndex()
+    val rating = integer("rating")
+    val comment = text("comment").nullable()
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 }
 
 object Bookings : IntIdTable("booking", "booking_id") {
@@ -108,4 +115,11 @@ object Admins : IntIdTable("admins") {
     val name = varchar("name", 255)
     val login = varchar("login", 255).uniqueIndex()
     val email = varchar("email", 255)
+}
+
+object VehicleDamages : IntIdTable("vehicle_damages", "damage_id") {
+    val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.RESTRICT)
+    val photoUrl = varchar("photo_url", 500)
+    val description = text("description").nullable()
+    val reportedAt = datetime("reported_at").defaultExpression(CurrentDateTime)
 }

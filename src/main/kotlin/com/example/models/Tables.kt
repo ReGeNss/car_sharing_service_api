@@ -2,13 +2,14 @@ package com.example.models
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
-
+import org.jetbrains.exposed.sql.javatime.datetime
 
 object Coordinates : IntIdTable("coordinates", "coordinates_id") {
-    val latitude = decimal("latitude", 9, 6).check { it.between(-90.toBigDecimal(), 90.toBigDecimal()) }
-    val longitude = decimal("longitude", 9, 6).check { it.between(-180.toBigDecimal(), 180.toBigDecimal()) }
+    val latitude =
+            decimal("latitude", 9, 6).check { it.between(-90.toBigDecimal(), 90.toBigDecimal()) }
+    val longitude =
+            decimal("longitude", 9, 6).check { it.between(-180.toBigDecimal(), 180.toBigDecimal()) }
 }
 
 object Tariffs : IntIdTable("tariff", "tariff_id") {
@@ -29,8 +30,8 @@ object Users : IntIdTable("users", "user_id") {
     val phone = varchar("phone", 20).uniqueIndex()
     val passportData = varchar("passport_data", 255).uniqueIndex()
     val driverLicense = varchar("driver_license", 255).uniqueIndex()
-    val driverLicensePhotoUrl = varchar("driver_license_photo_url", 500).nullable()
     val registrationDate = datetime("registration_date").defaultExpression(CurrentDateTime)
+
     val status = enumerationByName("status", 20, UserStatus::class)
 }
 
@@ -40,13 +41,13 @@ object VehicleModels : IntIdTable("vehicle_model", "model_id") {
     val type = enumerationByName("type", 20, VehicleType::class)
 
     init {
-        uniqueIndex(brand, modelName) 
+        uniqueIndex(brand, modelName)
     }
 }
 
 object Vehicles : IntIdTable("vehicle", "vehicle_id") {
     val model = reference("model_id", VehicleModels, onDelete = ReferenceOption.RESTRICT)
-    val plateNumber = varchar("plate_number", 15).uniqueIndex()
+    val plateNumber = varchar("plate_number", 8).uniqueIndex()
     val vin = varchar("vin", 17).uniqueIndex()
     val status = enumerationByName("status", 20, VehicleStatus::class)
     val location = reference("location", Coordinates, onDelete = ReferenceOption.RESTRICT)
@@ -54,17 +55,9 @@ object Vehicles : IntIdTable("vehicle", "vehicle_id") {
     val tariff = reference("tariff_id", Tariffs, onDelete = ReferenceOption.SET_NULL)
 }
 
-object Reviews : IntIdTable("reviews", "review_id") {
-    val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE).uniqueIndex()
-    val rating = integer("rating")
-    val comment = text("comment").nullable()
-    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
-}
-
 object Bookings : IntIdTable("booking", "booking_id") {
     val user = reference("user_id", Users, onDelete = ReferenceOption.CASCADE)
     val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.RESTRICT)
-
     val startTime = datetime("start_time")
     val endTime = datetime("end_time")
     val status = enumerationByName("status", 20, BookingStatus::class)
@@ -73,13 +66,13 @@ object Bookings : IntIdTable("booking", "booking_id") {
 object Trips : IntIdTable("trip", "trip_id") {
     val user = reference("user_id", Users, onDelete = ReferenceOption.CASCADE)
     val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.CASCADE)
-
     val startTime = datetime("start_time")
     val endTime = datetime("end_time").nullable()
 
-    val startLocation = reference("start_location", Coordinates, onDelete = ReferenceOption.RESTRICT)
-    val endLocation = reference("end_location", Coordinates, onDelete = ReferenceOption.RESTRICT).nullable()
-
+    val startLocation =
+            reference("start_location", Coordinates, onDelete = ReferenceOption.RESTRICT)
+    val endLocation =
+            reference("end_location", Coordinates, onDelete = ReferenceOption.RESTRICT).nullable()
     val distance = decimal("distance", 10, 2).default(java.math.BigDecimal.ZERO)
     val cost = decimal("cost", 10, 2).default(java.math.BigDecimal.ZERO)
 }
@@ -87,7 +80,6 @@ object Trips : IntIdTable("trip", "trip_id") {
 object Payments : IntIdTable("payment", "payment_id") {
     val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE).nullable()
     val booking = reference("booking_id", Bookings, onDelete = ReferenceOption.CASCADE)
-    
     val amount = decimal("amount", 10, 2)
     val method = enumerationByName("method", 20, PaymentMethod::class)
     val status = enumerationByName("status", 20, PaymentStatus::class)
@@ -95,7 +87,6 @@ object Payments : IntIdTable("payment", "payment_id") {
 
 object Maintenances : IntIdTable("maintenance", "maintenance_id") {
     val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.CASCADE)
-    
     val type = varchar("type", 100)
     val date = datetime("date")
     val mileage = decimal("mileage", 10, 2)
@@ -105,7 +96,6 @@ object Maintenances : IntIdTable("maintenance", "maintenance_id") {
 
 object Penalties : IntIdTable("penalty", "penalty_id") {
     val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE)
-    
     val type = varchar("type", 150)
     val amount = decimal("amount", 10, 2)
     val date = datetime("date")
@@ -115,11 +105,4 @@ object Admins : IntIdTable("admins") {
     val name = varchar("name", 255)
     val login = varchar("login", 255).uniqueIndex()
     val email = varchar("email", 255)
-}
-
-object VehicleDamages : IntIdTable("vehicle_damages", "damage_id") {
-    val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.RESTRICT)
-    val photoUrl = varchar("photo_url", 500)
-    val description = text("description").nullable()
-    val reportedAt = datetime("reported_at").defaultExpression(CurrentDateTime)
 }

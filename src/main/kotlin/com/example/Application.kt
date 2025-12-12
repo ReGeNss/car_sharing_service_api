@@ -1,18 +1,11 @@
 package com.example
 
-import com.example.config.DatabaseFactory
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.application.*
+import com.example.plugins.* fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-fun main() {
-    try {
-        DatabaseFactory.init()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return
-    }
-
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        configureRouting()
-    }.start(wait = true)
+fun Application.module() {
+    configureDatabases()
+    configureSerialization()
+    configureSwagger()
+    configureRouting()
 }

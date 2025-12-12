@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.javatime.datetime
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
-
+import org.postgresql.util.PGobject
 
 object Coordinates : IntIdTable("coordinates", "coordinates_id") {
     val latitude = decimal("latitude", 9, 6).check { it.between(-90.toBigDecimal(), 90.toBigDecimal()) }
@@ -29,9 +29,19 @@ object Users : IntIdTable("users", "user_id") {
     val phone = varchar("phone", 20).uniqueIndex()
     val passportData = varchar("passport_data", 255).uniqueIndex()
     val driverLicense = varchar("driver_license", 255).uniqueIndex()
-    val driverLicensePhotoUrl = varchar("driver_license_photo_url", 500).nullable()
     val registrationDate = datetime("registration_date").defaultExpression(CurrentDateTime)
-    val status = enumerationByName("status", 20, UserStatus::class)
+    val status = customEnumeration(
+        "status",
+        "user_status",
+        { value -> UserStatus.valueOf(value as String) }, // Читаємо з БД (все ок)
+        { value ->
+            // Пишемо в БД: Загортаємо в PGobject
+            PGobject().apply {
+                type = "user_status" // Точна назва типу в базі
+                this.value = value.name // Саме значення ("active")
+            }
+        }
+    )
 }
 
 object VehicleModels : IntIdTable("vehicle_model", "model_id") {
@@ -40,7 +50,7 @@ object VehicleModels : IntIdTable("vehicle_model", "model_id") {
     val type = enumerationByName("type", 20, VehicleType::class)
 
     init {
-        uniqueIndex(brand, modelName) 
+        uniqueIndex(brand, modelName)
     }
 }
 
@@ -87,7 +97,7 @@ object Trips : IntIdTable("trip", "trip_id") {
 object Payments : IntIdTable("payment", "payment_id") {
     val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE).nullable()
     val booking = reference("booking_id", Bookings, onDelete = ReferenceOption.CASCADE)
-    
+
     val amount = decimal("amount", 10, 2)
     val method = enumerationByName("method", 20, PaymentMethod::class)
     val status = enumerationByName("status", 20, PaymentStatus::class)
@@ -95,7 +105,7 @@ object Payments : IntIdTable("payment", "payment_id") {
 
 object Maintenances : IntIdTable("maintenance", "maintenance_id") {
     val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.CASCADE)
-    
+
     val type = varchar("type", 100)
     val date = datetime("date")
     val mileage = decimal("mileage", 10, 2)
@@ -105,7 +115,7 @@ object Maintenances : IntIdTable("maintenance", "maintenance_id") {
 
 object Penalties : IntIdTable("penalty", "penalty_id") {
     val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE)
-    
+
     val type = varchar("type", 150)
     val amount = decimal("amount", 10, 2)
     val date = datetime("date")

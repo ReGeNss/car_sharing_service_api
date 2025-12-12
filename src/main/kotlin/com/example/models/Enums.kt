@@ -1,6 +1,6 @@
 package com.example.models
 
-enum class UserStatus { active, inactive, blocked }
+enum class UserStatus { active, blocked }
 enum class VehicleType { electric, petrol, hybrid }
 enum class VehicleStatus { available, booked, in_trip, maintenance }
 enum class BookingStatus { active, expired, cancelled }

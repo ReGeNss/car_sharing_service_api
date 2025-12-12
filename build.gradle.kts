@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "2.0.0"
     id("io.ktor.plugin") version "2.3.12"
-    kotlin("plugin.serialization") version "1.9.22"
+    kotlin("plugin.serialization") version "2.0.0"
+    id("io.github.goooler.shadow") version "8.1.8"
 }
 
 group = "com.example"
@@ -19,25 +22,32 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("io.ktor:ktor-server-config-yaml")
+    implementation("io.ktor:ktor-server-openapi")
+    implementation("io.github.smiley4:ktor-swagger-ui:2.9.0")
     implementation("org.jetbrains.exposed:exposed-core:0.52.0")
     implementation("org.jetbrains.exposed:exposed-dao:0.52.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.52.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.52.0")
-    implementation("com.zaxxer:HikariCP:5.1.0") 
+    implementation("com.zaxxer:HikariCP:5.1.0")
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("com.h2database:h2:2.2.224")
+    implementation("org.mindrot:jbcrypt:0.4")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
 
 tasks {
-    withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-        mergeServiceFiles() 
+    withType<ShadowJar> {
+        mergeServiceFiles()
+        manifest {
+            attributes(Pair("Main-Class", "com.example.ApplicationKt"))
+        }
     }
 }

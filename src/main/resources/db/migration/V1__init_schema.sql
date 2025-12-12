@@ -1,4 +1,4 @@
-CREATE TYPE user_status AS ENUM ('active', 'inactive', 'blocked');
+CREATE TYPE user_status AS ENUM ('active', 'blocked');
 CREATE TYPE vehicle_type AS ENUM ('electric','petrol','hybrid');
 CREATE TYPE vehicle_status AS ENUM ('available','booked','in_trip','maintenance');
 CREATE TYPE booking_status AS ENUM ('active','expired','cancelled');
@@ -45,7 +45,7 @@ CREATE TABLE vehicle_model (
     model_id SERIAL PRIMARY KEY,
     brand VARCHAR(100) NOT NULL,
     model_name VARCHAR(100) NOT NULL,
-    type vehicle_type NOT NULL, -- Type is usually inherent to the model
+    type vehicle_type NOT NULL,
     CONSTRAINT uq_brand_model UNIQUE (brand, model_name)
 );
 

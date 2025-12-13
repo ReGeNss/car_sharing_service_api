@@ -3,6 +3,7 @@ package com.example.models
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
+import org.postgresql.util.PGobject
 import org.jetbrains.exposed.sql.javatime.datetime
 
 object Coordinates : IntIdTable("coordinates", "coordinates_id") {
@@ -31,8 +32,17 @@ object Users : IntIdTable("users", "user_id") {
     val passportData = varchar("passport_data", 255).uniqueIndex()
     val driverLicense = varchar("driver_license", 255).uniqueIndex()
     val registrationDate = datetime("registration_date").defaultExpression(CurrentDateTime)
-
-    val status = enumerationByName("status", 20, UserStatus::class)
+    val status = customEnumeration(
+        "status",
+        "user_status",
+        { value -> UserStatus.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "user_status"
+                this.value = value.name
+            }
+        }
+    )
 }
 
 object VehicleModels : IntIdTable("vehicle_model", "model_id") {

@@ -8,9 +8,9 @@ import org.jetbrains.exposed.sql.javatime.datetime
 
 object Coordinates : IntIdTable("coordinates", "coordinates_id") {
     val latitude =
-            decimal("latitude", 9, 6).check { it.between(-90.toBigDecimal(), 90.toBigDecimal()) }
+            decimal("latitude", 9, 6).check { it.between((50.40).toBigDecimal(), 50.50.toBigDecimal()) }
     val longitude =
-            decimal("longitude", 9, 6).check { it.between(-180.toBigDecimal(), 180.toBigDecimal()) }
+            decimal("longitude", 9, 6).check { it.between(30.40.toBigDecimal(), 30.60.toBigDecimal()) }
 }
 
 object Tariffs : IntIdTable("tariff", "tariff_id") {
@@ -48,7 +48,17 @@ object Users : IntIdTable("users", "user_id") {
 object VehicleModels : IntIdTable("vehicle_model", "model_id") {
     val brand = varchar("brand", 100)
     val modelName = varchar("model_name", 100)
-    val type = enumerationByName("type", 20, VehicleType::class)
+    val type = customEnumeration(
+        "type",
+        "vehicle_type",
+        { value -> VehicleType.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "vehicle_type"
+                this.value = value.name
+            }
+        }
+    )
 
     init {
         uniqueIndex(brand, modelName)
@@ -59,7 +69,17 @@ object Vehicles : IntIdTable("vehicle", "vehicle_id") {
     val model = reference("model_id", VehicleModels, onDelete = ReferenceOption.RESTRICT)
     val plateNumber = varchar("plate_number", 8).uniqueIndex()
     val vin = varchar("vin", 17).uniqueIndex()
-    val status = enumerationByName("status", 20, VehicleStatus::class)
+    val status = customEnumeration(
+        "status",
+        "vehicle_status",
+        { value -> VehicleStatus.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "vehicle_status"
+                this.value = value.name
+            }
+        }
+    )
     val location = reference("location", Coordinates, onDelete = ReferenceOption.RESTRICT)
     val fuelLevel = integer("fuel_level")
     val tariff = reference("tariff_id", Tariffs, onDelete = ReferenceOption.SET_NULL)
@@ -70,7 +90,17 @@ object Bookings : IntIdTable("booking", "booking_id") {
     val vehicle = reference("vehicle_id", Vehicles, onDelete = ReferenceOption.RESTRICT)
     val startTime = datetime("start_time")
     val endTime = datetime("end_time")
-    val status = enumerationByName("status", 20, BookingStatus::class)
+    val status = customEnumeration(
+        "status",
+        "booking_status",
+        { value -> BookingStatus.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "booking_status"
+                this.value = value.name
+            }
+        }
+    )
 }
 
 object Trips : IntIdTable("trip", "trip_id") {
@@ -91,8 +121,28 @@ object Payments : IntIdTable("payment", "payment_id") {
     val trip = reference("trip_id", Trips, onDelete = ReferenceOption.CASCADE).nullable()
     val booking = reference("booking_id", Bookings, onDelete = ReferenceOption.CASCADE)
     val amount = decimal("amount", 10, 2)
-    val method = enumerationByName("method", 20, PaymentMethod::class)
-    val status = enumerationByName("status", 20, PaymentStatus::class)
+    val method = customEnumeration(
+        "method",
+        "payment_method",
+        { value -> PaymentMethod.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "payment_method"
+                this.value = value.name
+            }
+        }
+    )
+    val status = customEnumeration(
+        "status",
+        "payment_status",
+        { value -> PaymentStatus.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "payment_status"
+                this.value = value.name
+            }
+        }
+    )
 }
 
 object Maintenances : IntIdTable("maintenance", "maintenance_id") {
@@ -101,7 +151,17 @@ object Maintenances : IntIdTable("maintenance", "maintenance_id") {
     val date = datetime("date")
     val mileage = decimal("mileage", 10, 2)
     val comment = varchar("comment", 255).nullable()
-    val status = enumerationByName("status", 20, MaintenanceStatus::class)
+    val status = customEnumeration(
+        "status",
+        "maintenance_status",
+        { value -> MaintenanceStatus.valueOf(value as String) },
+        { value ->
+            PGobject().apply {
+                type = "maintenance_status"
+                this.value = value.name
+            }
+        }
+    )
 }
 
 object Penalties : IntIdTable("penalty", "penalty_id") {

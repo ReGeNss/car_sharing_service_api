@@ -10,13 +10,18 @@ import org.jetbrains.exposed.sql.selectAll
 
 object VehicleRepository {
     fun create(req: VehicleCreateDto): Int = transaction {
+        val locationId = Coordinates.insertAndGetId { row ->
+            row[latitude] = req.locationLatitude.toBigDecimal()
+            row[longitude] = req.locationLongitude.toBigDecimal()
+        }.value
+
         val defaultStatus = VehicleStatus.available
         Vehicles.insertAndGetId { row ->
             row[model] = EntityID(req.modelId, VehicleModels)
             row[plateNumber] = req.plateNumber
             row[vin] = req.vin
             row[status] = defaultStatus
-            row[location] = EntityID(req.locationId, Coordinates)
+            row[location] = EntityID(locationId, Coordinates)
             row[fuelLevel] = req.fuelLevel
             row[tariff] = EntityID(req.tariffId, Tariffs)
         }.value

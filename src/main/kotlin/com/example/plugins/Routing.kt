@@ -3,6 +3,7 @@ package com.example.plugins
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import com.example.routes.user.userRoutes
+import com.example.routes.vehicle.vehicleRoutes
 import io.ktor.server.response.respondText
 
 fun Application.configureRouting() {
@@ -12,6 +13,7 @@ fun Application.configureRouting() {
         }
         route("/api") {
             userRoutes()
+            vehicleRoutes()
         }
     }
 }

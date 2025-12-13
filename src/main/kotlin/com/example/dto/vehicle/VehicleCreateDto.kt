@@ -9,6 +9,6 @@ data class VehicleCreateDto(
     val vin: String,
     val locationId: Int,
     val fuelLevel: Int,
-    val tariffId: Int? = null
+    val tariffId: Int,
 )
 
